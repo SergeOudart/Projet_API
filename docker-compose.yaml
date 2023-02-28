@@ -1,7 +1,7 @@
 services:
 
   restservice-Offre:
-    image: m2/OffreService:1.0
+    image: m2/offre-service:1.0
     ports:
       - "8080:8080"
     networks:
@@ -15,7 +15,7 @@ services:
   restservice-User:
     image: m2/user-service:1.0
     ports:
-      - "8081:8080"
+      - "8081:8081"
     networks:
       - isolated_nw2
     volumes:

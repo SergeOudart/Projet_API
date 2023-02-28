@@ -14,19 +14,21 @@ import lombok.NoArgsConstructor;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor 
-public class User implements Serializable{
+public class Users implements Serializable{
     
     private @Id @GeneratedValue int id;
-    private String nom;
-    private String prenom;
+    private String username;
     private String adresse;
     private String email;
+    private String nom;
+    private String prenom;
 
-    public User(String nom, String prenom, String adresse, String email) {
-        this.nom = nom;
-        this.prenom = prenom;
+    public Users(String username, String adresse, String email, String nom, String prenom) {
+        this.username = username;
         this.adresse = adresse;
         this.email = email;
+        this.nom = nom;
+        this.prenom = prenom;
     }
 
     public int getId() {
