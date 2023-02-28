@@ -1,0 +1,48 @@
+services:
+
+  restservice-Offre:
+    image: m2/OffreService:1.0
+    ports:
+      - "8080:8080"
+    networks:
+      - isolated_nw2
+    volumes:
+      - /tmp
+    container_name: restservice-offre
+    depends_on:
+      - pgdb
+
+  restservice-User:
+    image: m2/user-service:1.0
+    ports:
+      - "8081:8080"
+    networks:
+      - isolated_nw2
+    volumes:
+      - /tmp
+    container_name: restservice-user
+    depends_on:
+      - pgdb
+    
+  pgdb:
+    image: sergeoudart/projet_api_postgre:latest
+    ports:
+      - "5432:5432"
+    networks:
+      - isolated_nw2
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=riovas
+    container_name: pgdb
+
+networks:
+  isolated_nw2:
+    driver: bridge
+
+volumes:
+  db-data:
+    driver: local
+
