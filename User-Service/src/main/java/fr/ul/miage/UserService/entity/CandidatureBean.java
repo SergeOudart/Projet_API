@@ -1,4 +1,4 @@
-package fr.ul.miage.OffreService.entity;
+package fr.ul.miage.UserService.entity;
 
 import java.sql.Date;
 import java.util.UUID;
@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor 
-public class Candidature {
+public class CandidatureBean {
     
     private @Id @GeneratedValue(generator = "UUID") UUID id;
     private UUID idOffreStage;
@@ -23,7 +23,7 @@ public class Candidature {
     private Date dateCandidature;
     private String etat;
 
-    public Candidature(UUID idOffreStage, UUID idUser, Date dateCandidature, String etat) {
+    public CandidatureBean(UUID idOffreStage, UUID idUser, Date dateCandidature, String etat) {
         this.idOffreStage = idOffreStage;
         this.idUser = idUser;
         this.dateCandidature = dateCandidature;

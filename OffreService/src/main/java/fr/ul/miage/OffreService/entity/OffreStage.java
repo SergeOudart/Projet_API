@@ -2,8 +2,11 @@ package fr.ul.miage.OffreService.entity;
 
 import java.io.Serializable;
 import java.sql.Date;
+import java.util.UUID;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 import lombok.AllArgsConstructor;
@@ -16,7 +19,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class OffreStage implements Serializable{
     
-    private @Id @GeneratedValue int id;
+    private @Id @GeneratedValue(generator = "UUID") UUID id;
     private String nom;
     private String domaine;
     private String descriptionStage;
@@ -75,7 +78,7 @@ public class OffreStage implements Serializable{
         this.statut = "vacante";
     }
 
-    public int getId() {
+    public UUID getId() {
         return id;
     }
     

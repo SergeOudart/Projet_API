@@ -1,6 +1,7 @@
 package fr.ul.miage.OffreService.controllers;
 
 import java.net.URI;
+import java.util.UUID;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,8 +38,8 @@ public class OffreStageController {
     }
     
     @GetMapping("/Offres/{id}")
-    public ResponseEntity<?> getOffreById(@PathVariable("id") int l){
-        return ResponseEntity.ok(oa.toModel(or.findById(l).get()));
+    public ResponseEntity<?> getOffreById(@PathVariable("id") UUID uuid){
+        return ResponseEntity.ok(oa.toModel(or.findById(uuid).get()));
     }
 
     @GetMapping("/filtre/{filtre}")
@@ -113,8 +114,7 @@ public class OffreStageController {
 
     @PostMapping("/Offres/{id}")
     @Transactional
-    public ResponseEntity<?> save(@RequestBody Candidature candidature, @PathVariable("id") int id){
-        int idOffreStage = or.findById(id).get().getId();
+    public ResponseEntity<?> save(@RequestBody Candidature candidature, @PathVariable("id") UUID id){
         Candidature toSave = new Candidature(
             id,
             candidature.getIdUser(),
@@ -126,10 +126,14 @@ public class OffreStageController {
         return ResponseEntity.ok(location);
     }
 
-    @GetMapping("/Offres/{id}/users")
-    public ResponseEntity<?> getAllProp(@PathVariable("id") int l) {
-
-        return ResponseEntity.ok(ca.toModel(cr.findById(l).get()));
+    @GetMapping("/Candidatures/{id}/candidature")
+    public ResponseEntity<?> getCandidatureById(@PathVariable("id") UUID uuid){
+        return ResponseEntity.ok(ca.toCollectionModel(cr.findByIdUser(uuid)));
     }
+
+    @GetMapping("/Candidatures") // A RETIRER
+    public ResponseEntity<?> getAllCandidatures(){
+        return ResponseEntity.ok(ca.toCollectionModel(cr.findAll()));
+    } 
     
 }

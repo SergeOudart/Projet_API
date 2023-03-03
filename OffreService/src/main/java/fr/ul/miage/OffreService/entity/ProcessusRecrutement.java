@@ -15,16 +15,11 @@ import lombok.NoArgsConstructor;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-public class Organisation implements Serializable{
-    
-    private @Id @GeneratedValue(generator = "UUID") UUID id;
-    private String nom;
-    private String adresse;
-    private String pays;
+public class ProcessusRecrutement implements Serializable{
 
-    public Organisation(String nom, String adresse, String pays) {
-        this.nom = nom;
-        this.adresse = adresse;
-        this.pays = pays;
-    }
+    private @Id @GeneratedValue(generator = "UUID") UUID id;
+    private int idOffre;
+    private int idCandidature;
+    
+
 }

@@ -17,7 +17,7 @@ public class DatabaseLoader {
     CommandLineRunner initDatabase(UsersRepository repository) {
 
         return args -> {
-            log.info(
+            /*log.info(
                 "Preloading info in database" + repository.save(new Users(
                     "soudart",
                     "2 rue du Test",
@@ -34,7 +34,7 @@ public class DatabaseLoader {
                     "Reinert",
                     "Guillaume"
                 ))
-            );
+            );*/
         };
     }
 }

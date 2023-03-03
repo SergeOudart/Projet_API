@@ -1,6 +1,7 @@
 package fr.ul.miage.UserService.entity;
 
 import java.io.Serializable;
+import java.util.UUID;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -16,7 +17,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor 
 public class Users implements Serializable{
     
-    private @Id @GeneratedValue int id;
+    private @Id @GeneratedValue(generator = "UUID") UUID id;
     private String username;
     private String adresse;
     private String email;
@@ -31,11 +32,11 @@ public class Users implements Serializable{
         this.prenom = prenom;
     }
 
-    public int getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 

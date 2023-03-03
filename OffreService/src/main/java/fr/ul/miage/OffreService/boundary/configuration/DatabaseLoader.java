@@ -19,7 +19,7 @@ public class DatabaseLoader {
     CommandLineRunner initDatabase(OffreStageRepository repository, OrganisationRepository repositoryOrga) {
 
         return args -> {
-            log.info(
+            /*log.info(
                 "Preloading info in database" + repositoryOrga.save(new Organisation(
                     "Entreprise1",
                     "1 rue du Test",
@@ -83,7 +83,7 @@ public class DatabaseLoader {
                 "test2",
                 "test2",
                 "Oui"
-            ));
+            ));*/
 
 
         };

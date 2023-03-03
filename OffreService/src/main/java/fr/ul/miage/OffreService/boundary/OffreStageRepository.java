@@ -1,5 +1,8 @@
 package fr.ul.miage.OffreService.boundary;
 
+import java.util.Optional;
+import java.util.UUID;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import fr.ul.miage.OffreService.entity.OffreStage;
 
@@ -18,5 +21,6 @@ public interface OffreStageRepository extends JpaRepository<OffreStage, Integer>
     Iterable<? extends OffreStage> findByDureeStage(String duree);
     Iterable<? extends OffreStage> findBySalaireStage(String salaire);
     Iterable<? extends OffreStage> findByIndemnisation(String indemnisation);
-    Iterable<? extends OffreStage> findByOrganisationId(String organisationId);        
+    Iterable<? extends OffreStage> findByOrganisationId(String organisationId);
+    Optional<? extends OffreStage> findById(UUID uuid);        
 }
