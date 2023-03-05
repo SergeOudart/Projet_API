@@ -7,25 +7,25 @@ import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.stereotype.Component;
 
 import fr.ul.miage.OffreService.controllers.OffreStageController;
-import fr.ul.miage.OffreService.entity.Candidature;
+import fr.ul.miage.OffreService.entity.ProcessusRecrutement;
 
 import java.util.stream.StreamSupport;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 
 @Component
-public class CandidatureAssembler implements RepresentationModelAssembler<Candidature, EntityModel<Candidature>> {
+public class ProcessusRecrutementAssembler implements RepresentationModelAssembler<ProcessusRecrutement, EntityModel<ProcessusRecrutement>> {
 
     @Override
-    public EntityModel<Candidature> toModel(Candidature candidature) {
-        return EntityModel.of(candidature,
-                linkTo(methodOn(OffreStageController.class).getOffreById(candidature.getId())).withSelfRel(),
+    public EntityModel<ProcessusRecrutement> toModel(ProcessusRecrutement processusRecrutement) {
+        return EntityModel.of(processusRecrutement,
+                linkTo(methodOn(OffreStageController.class).getOffreById(processusRecrutement.getId())).withSelfRel(),
                 linkTo(methodOn(OffreStageController.class).getAllOffres()).withRel("collection"));
     }
 
     @Override
-    public CollectionModel<EntityModel<Candidature>> toCollectionModel(Iterable<? extends Candidature> entities) {
-        List<EntityModel<Candidature>> classModel = StreamSupport
+    public CollectionModel<EntityModel<ProcessusRecrutement>> toCollectionModel(Iterable<? extends ProcessusRecrutement> entities) {
+        List<EntityModel<ProcessusRecrutement>> classModel = StreamSupport
             .stream(entities.spliterator(), false)
             .map(this::toModel)
             .toList();

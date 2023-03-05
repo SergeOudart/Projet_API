@@ -25,12 +25,12 @@ public class UsersAssembler implements RepresentationModelAssembler<Users, Entit
 
     @Override
     public CollectionModel<EntityModel<Users>> toCollectionModel(Iterable<? extends Users> entities) {
-        List<EntityModel<Users>> intervenanModel = StreamSupport
+        List<EntityModel<Users>> classModel = StreamSupport
             .stream(entities.spliterator(), false)
             .map(this::toModel)
             .toList();
 
-        return CollectionModel.of(intervenanModel, linkTo(methodOn(UsersController.class)
+        return CollectionModel.of(classModel, linkTo(methodOn(UsersController.class)
             .getAllUsers()).withSelfRel());
     }
 }

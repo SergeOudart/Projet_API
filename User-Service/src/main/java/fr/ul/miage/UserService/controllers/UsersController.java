@@ -3,33 +3,36 @@ package fr.ul.miage.UserService.controllers;
 import java.util.UUID;
 
 import org.springframework.boot.web.client.RestTemplateBuilder;
-import org.springframework.cloud.client.ServiceInstance;
-import org.springframework.cloud.loadbalancer.core.RoundRobinLoadBalancer;
-import org.springframework.cloud.loadbalancer.support.LoadBalancerClientFactory;
 import org.springframework.context.annotation.Bean;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
-import fr.ul.miage.UserService.entity.CandidatureBean;
+
 import fr.ul.miage.UserService.boundary.UsersAssembler;
 import fr.ul.miage.UserService.boundary.UsersRepository;
+import fr.ul.miage.UserService.boundary.CandidatureRepository;
+import fr.ul.miage.UserService.entity.Candidature;
 
 @RestController
 public class UsersController {
 
     private final UsersRepository ur;
     private final UsersAssembler ua;
-    RestTemplate restTemplate;
-    LoadBalancerClientFactory clientFactory;
+    private final CandidatureRepository cr;
+    private final RestTemplate restTemplate;
 
-    UsersController(UsersRepository ur, UsersAssembler ua, RestTemplate rt, LoadBalancerClientFactory cf){
+
+    UsersController(UsersRepository ur, UsersAssembler ua, RestTemplate restTemplate, CandidatureRepository cr){
         this.ur = ur;
         this.ua = ua;
-        this.restTemplate = rt;
-        this.clientFactory = cf;
+        this.restTemplate = restTemplate;
+        this.cr = cr;
     }
 
     @Bean
@@ -54,14 +57,28 @@ public class UsersController {
 
     @GetMapping("/Users/{username}/candidatures")
     public ResponseEntity<?> getCandidaturesByUser(@PathVariable("username") String username){
-        RoundRobinLoadBalancer lb = clientFactory.getInstance("offre-service", RoundRobinLoadBalancer.class);
-        ServiceInstance instance = lb.choose().block().getServer();
         UUID id = ur.findByUsername(username).get().getId();
-        String url = "http://" + instance.getHost() + ":" + instance.getPort() + "/Candidatures/{id}/candidature";
+        String url = "http://restservice-Offre:8080/Candidatures/{id}/candidature";
 
-        CandidatureBean response = new RestTemplate().getForObject(url, CandidatureBean.class, id);
-        // No servers available for service: OffreService
-        return ResponseEntity.ok(null);
+        ResponseEntity<CollectionModel> response = restTemplate.getForEntity(url, CollectionModel.class, id);
+
+        return ResponseEntity.ok(response.getBody());
+    }
+
+    @DeleteMapping("/Users/{username}/candidatures/{idCandidature}")
+    public ResponseEntity<?> deleteCandidature(@PathVariable("username") String username, @PathVariable("idCandidature") UUID idCandidature){
+        UUID id = ur.findByUsername(username).get().getId();
+        String url = "http://restservice-Offre:8080/Candidatures/{idUser}/{idCandidature}";
+
+        ResponseEntity<Candidature> response = restTemplate.getForEntity(url, Candidature.class, id, idCandidature);
+
+        Candidature c = response.getBody();
+
+        cr.delete(c);
+
+        String message = String.format("Candidature [%s] supprimée", idCandidature);
+
+        return ResponseEntity.ok(message);
     }
     
 

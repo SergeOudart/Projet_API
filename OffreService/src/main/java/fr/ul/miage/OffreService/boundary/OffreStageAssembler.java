@@ -25,12 +25,12 @@ public class OffreStageAssembler implements RepresentationModelAssembler<OffreSt
 
     @Override
     public CollectionModel<EntityModel<OffreStage>> toCollectionModel(Iterable<? extends OffreStage> entities) {
-        List<EntityModel<OffreStage>> intervenanModel = StreamSupport
+        List<EntityModel<OffreStage>> classModel = StreamSupport
             .stream(entities.spliterator(), false)
             .map(this::toModel)
             .toList();
 
-        return CollectionModel.of(intervenanModel, linkTo(methodOn(OffreStageController.class)
+        return CollectionModel.of(classModel, linkTo(methodOn(OffreStageController.class)
             .getAllOffres()).withSelfRel());
     }
 }

@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor 
-public class CandidatureBean {
+public class Candidature {
     
     private @Id @GeneratedValue(generator = "UUID") UUID id;
     private UUID idOffreStage;
@@ -23,7 +23,7 @@ public class CandidatureBean {
     private Date dateCandidature;
     private String etat;
 
-    public CandidatureBean(UUID idOffreStage, UUID idUser, Date dateCandidature, String etat) {
+    public Candidature(UUID idOffreStage, UUID idUser, Date dateCandidature, String etat) {
         this.idOffreStage = idOffreStage;
         this.idUser = idUser;
         this.dateCandidature = dateCandidature;

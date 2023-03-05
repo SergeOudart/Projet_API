@@ -1,11 +1,11 @@
-package fr.ul.miage.OffreService.boundary;
+package fr.ul.miage.UserService.boundary;
 
 import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import fr.ul.miage.OffreService.entity.Candidature;
+import fr.ul.miage.UserService.entity.Candidature;
 
 public interface CandidatureRepository extends JpaRepository<Candidature,Integer>{
 

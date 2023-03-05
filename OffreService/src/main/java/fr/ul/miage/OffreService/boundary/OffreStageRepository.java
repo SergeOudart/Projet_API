@@ -22,5 +22,5 @@ public interface OffreStageRepository extends JpaRepository<OffreStage, Integer>
     Iterable<? extends OffreStage> findBySalaireStage(String salaire);
     Iterable<? extends OffreStage> findByIndemnisation(String indemnisation);
     Iterable<? extends OffreStage> findByOrganisationId(String organisationId);
-    Optional<? extends OffreStage> findById(UUID uuid);        
+    Optional<? extends OffreStage> findById(UUID uuid);      
 }
