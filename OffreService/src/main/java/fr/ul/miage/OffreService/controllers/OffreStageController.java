@@ -13,12 +13,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
 
 import fr.ul.miage.OffreService.boundary.*;
 import fr.ul.miage.OffreService.boundary.CandidatureAssembler;
 import fr.ul.miage.OffreService.entity.OffreStage;
 import fr.ul.miage.OffreService.entity.Candidature;
 import fr.ul.miage.OffreService.entity.ProcessusRecrutement;
+import fr.ul.miage.OffreService.entity.Users;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 
 @RestController
@@ -29,15 +31,15 @@ public class OffreStageController {
     private final CandidatureRepository cr;
     private final CandidatureAssembler ca;
     private final ProcessusRecrutementRepository pr;
-    private final ProcessusRecrutementAssembler pa;
+    private final RestTemplate restTemplate;
 
-    OffreStageController(OffreStageRepository or, OffreStageAssembler oa, CandidatureRepository cr, CandidatureAssembler ca, ProcessusRecrutementRepository pr, ProcessusRecrutementAssembler pa){
+    OffreStageController(OffreStageRepository or, OffreStageAssembler oa, CandidatureRepository cr, CandidatureAssembler ca, ProcessusRecrutementRepository pr, RestTemplate restTemplate){
         this.or = or;
         this.oa = oa;
         this.cr = cr;
         this.ca = ca;
         this.pr = pr;
-        this.pa = pa;
+        this.restTemplate = restTemplate;
     }
 
 
@@ -143,21 +145,24 @@ public class OffreStageController {
 
     //Récuperer les candidatures d'une personne
     @GetMapping("/Candidatures/{id}/candidature")
-    public ResponseEntity<?> getCandidatureById(@PathVariable("id") UUID uuid){
-        return ResponseEntity.ok(ca.toCollectionModel(cr.findByIdUser(uuid)));
+    public ResponseEntity<?> getCandidatureById(@PathVariable("id") UUID id){
+        return ResponseEntity.ok(ca.toCollectionModel(cr.findByIdUser(id)));
     }
 
     //Poster un processus de recrutement
     @PostMapping("/Candidatures/{id}/candidature")
     public ResponseEntity<?> postProcessusRecrutement(@PathVariable("id") UUID uuid, @RequestBody ProcessusRecrutement processus){
         ProcessusRecrutement toSave = new ProcessusRecrutement(
-            processus.getIdOffre(),
             processus.getIdCandidature(),
             processus.getNombreEntretien(),
             processus.getDecision(),
             processus.getRaison()
         );
         ProcessusRecrutement saved = pr.save(toSave);
+
+        Candidature toUpdate = cr.findById(uuid).get();
+        toUpdate.setEtat("Accepté");
+        cr.save(toUpdate);
         URI location = linkTo(OffreStageController.class).slash(saved.getId()).toUri();
         return ResponseEntity.ok(location);
     }
@@ -223,6 +228,13 @@ public class OffreStageController {
         else {
             return ResponseEntity.notFound().build();
         }
+    }
+
+    @GetMapping("/Candidatures/{idCandidature}")
+    public ResponseEntity<?> getStatutForCandidature(@PathVariable("idCandidature") UUID idCandidature){
+        
+        return ResponseEntity.ok(ca.toCollection)
+
     }
         
 }

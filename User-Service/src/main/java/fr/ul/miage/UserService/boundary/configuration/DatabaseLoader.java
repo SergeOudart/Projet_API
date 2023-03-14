@@ -16,25 +16,32 @@ public class DatabaseLoader {
     @Bean
     CommandLineRunner initDatabase(UsersRepository repository) {
 
-        return args -> {
-            /*log.info(
-                "Preloading info in database" + repository.save(new Users(
-                    "soudart",
-                    "2 rue du Test",
-                    "sergeoudart@test.com",
-                    "Oudart",
-                    "Serge"
-                ))
-            );
-            log.info(
-                "Preloading info in database" + repository.save(new Users(
-                    "rguillaume",
-                    "4 rue du Test",
-                    "guillaumereinert@test.fr",
-                    "Reinert",
-                    "Guillaume"
-                ))
-            );*/
-        };
+
+        if (repository.count() == 0) {
+            return args -> {
+                log.info(
+                    "Preloading info in database" + repository.save(new Users(
+                        "soudart",
+                        "2 rue du Test",
+                        "sergeoudart@test.com",
+                        "Oudart",
+                        "Serge"
+                    ))
+                );
+                log.info(
+                    "Preloading info in database" + repository.save(new Users(
+                        "rguillaume",
+                        "4 rue du Test",
+                        "guillaumereinert@test.fr",
+                        "Reinert",
+                        "Guillaume"
+                    ))
+                );
+            };
+        } else {
+            return args -> {
+                log.info("Database already loaded");
+            };
+        }
     }
 }

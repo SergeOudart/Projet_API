@@ -18,14 +18,12 @@ import lombok.NoArgsConstructor;
 public class ProcessusRecrutement implements Serializable{
 
     private @Id @GeneratedValue(generator = "UUID") UUID id;
-    private int idOffre;
-    private int idCandidature;
+    private UUID idCandidature;
     private int nombreEntretien;
     private String decision;
     private String raison;
 
-    public ProcessusRecrutement(int idOffre, int idCandidature, int nombreEntretien, String decision, String raison) {
-        this.idOffre = idOffre;
+    public ProcessusRecrutement(UUID idCandidature, int nombreEntretien, String decision, String raison) {
         this.idCandidature = idCandidature;
         this.nombreEntretien = nombreEntretien;
         this.decision = decision;
@@ -40,19 +38,11 @@ public class ProcessusRecrutement implements Serializable{
         this.id = id;
     }
 
-    public int getIdOffre() {
-        return idOffre;
-    }
-
-    public void setIdOffre(int idOffre) {
-        this.idOffre = idOffre;
-    }
-
-    public int getIdCandidature() {
+    public UUID getIdCandidature() {
         return idCandidature;
     }
 
-    public void setIdCandidature(int idCandidature) {
+    public void setIdCandidature(UUID idCandidature) {
         this.idCandidature = idCandidature;
     }
 

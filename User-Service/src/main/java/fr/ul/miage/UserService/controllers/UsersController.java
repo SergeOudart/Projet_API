@@ -6,10 +6,10 @@ import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
@@ -55,12 +55,17 @@ public class UsersController {
         return ResponseEntity.ok(ua.toModel(ur.findByUsername(username).get()));
     }
 
+    @GetMapping("/User/{username}/getUser")
+    public ResponseEntity<?> getUserByUsername(@PathVariable("username") String username){
+        return ResponseEntity.ok(ua.toModel(ur.findByUsername(username).get()));
+    }
+
     @GetMapping("/Users/{username}/candidatures")
     public ResponseEntity<?> getCandidaturesByUser(@PathVariable("username") String username){
         UUID id = ur.findByUsername(username).get().getId();
         String url = "http://restservice-Offre:8080/Candidatures/{id}/candidature";
 
-        ResponseEntity<CollectionModel> response = restTemplate.getForEntity(url, CollectionModel.class, id);
+        ResponseEntity<?> response = restTemplate.getForEntity(url, CollectionModel.class, id);
 
         return ResponseEntity.ok(response.getBody());
     }
@@ -79,6 +84,19 @@ public class UsersController {
         String message = String.format("Candidature [%s] supprimée", idCandidature);
 
         return ResponseEntity.ok(message);
+    }
+
+    // Get statut offre
+    @GetMapping("/Users/{username}/candidatures/{idCandidature}")
+    public ResponseEntity<?> getStatutOffre(@PathVariable("username") String username, @PathVariable("idCandidature") UUID idCandidature) {
+        UUID id = ur.findByUsername(username).get().getId();
+        String url = "http://restservice-Offre:8080/Candidatures/{idCandidature}";
+
+        ResponseEntity<Candidature> response = restTemplate.getForEntity(url, Candidature.class, idCandidature);
+
+        Candidature c = response.getBody();
+
+        return ResponseEntity.ok(c.getEtat());
     }
     
 
