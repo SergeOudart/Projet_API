@@ -9,7 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
@@ -89,7 +88,6 @@ public class UsersController {
     // Get statut offre
     @GetMapping("/Users/{username}/candidatures/{idCandidature}")
     public ResponseEntity<?> getStatutOffre(@PathVariable("username") String username, @PathVariable("idCandidature") UUID idCandidature) {
-        UUID id = ur.findByUsername(username).get().getId();
         String url = "http://restservice-Offre:8080/Candidatures/{idCandidature}";
 
         ResponseEntity<Candidature> response = restTemplate.getForEntity(url, Candidature.class, idCandidature);

@@ -4,6 +4,8 @@ import java.net.URI;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -20,7 +22,6 @@ import fr.ul.miage.OffreService.boundary.CandidatureAssembler;
 import fr.ul.miage.OffreService.entity.OffreStage;
 import fr.ul.miage.OffreService.entity.Candidature;
 import fr.ul.miage.OffreService.entity.ProcessusRecrutement;
-import fr.ul.miage.OffreService.entity.Users;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 
 @RestController
@@ -31,17 +32,19 @@ public class OffreStageController {
     private final CandidatureRepository cr;
     private final CandidatureAssembler ca;
     private final ProcessusRecrutementRepository pr;
-    private final RestTemplate restTemplate;
 
-    OffreStageController(OffreStageRepository or, OffreStageAssembler oa, CandidatureRepository cr, CandidatureAssembler ca, ProcessusRecrutementRepository pr, RestTemplate restTemplate){
+    OffreStageController(OffreStageRepository or, OffreStageAssembler oa, CandidatureRepository cr, CandidatureAssembler ca, ProcessusRecrutementRepository pr){
         this.or = or;
         this.oa = oa;
         this.cr = cr;
         this.ca = ca;
         this.pr = pr;
-        this.restTemplate = restTemplate;
     }
 
+    @Bean
+    public RestTemplate restTemplate(RestTemplateBuilder builder) {
+        return builder.build();
+    }
 
     //Récuperer toutes les offres
     @GetMapping("/Offres")
@@ -153,7 +156,7 @@ public class OffreStageController {
     @PostMapping("/Candidatures/{id}/candidature")
     public ResponseEntity<?> postProcessusRecrutement(@PathVariable("id") UUID uuid, @RequestBody ProcessusRecrutement processus){
         ProcessusRecrutement toSave = new ProcessusRecrutement(
-            processus.getIdCandidature(),
+            uuid,
             processus.getNombreEntretien(),
             processus.getDecision(),
             processus.getRaison()
@@ -167,11 +170,13 @@ public class OffreStageController {
         return ResponseEntity.ok(location);
     }
 
+    //Récupérer les candidatures d'une offre
     @GetMapping("/Offres/{id}/users")
     public ResponseEntity<?> getCandidaturesByOffre(@PathVariable("id") UUID uuid){
         return ResponseEntity.ok(ca.toCollectionModel(cr.findByIdOffreStage(uuid)));
     }
 
+    //Mettre à jour une offre
     @PutMapping("Offres/{id}")
     public ResponseEntity<?> update(@PathVariable("id") UUID uuid, @RequestBody OffreStage offreStage){
         OffreStage toUpdate = or.findById(uuid).get();
@@ -205,6 +210,7 @@ public class OffreStageController {
         return ResponseEntity.ok().build();
     }
 
+    //Supprimer une offre
     @DeleteMapping("Offres/{id}")
     public ResponseEntity<?> delete(@PathVariable("id") UUID uuid){
         Optional<?> toDelete = or.findById(uuid);
@@ -219,6 +225,7 @@ public class OffreStageController {
         }
     }
 
+    //Supprimer une candidature
     @GetMapping("/Candidatures/{idUser}/{idCandidature}")
     public ResponseEntity<?> getCandidatureByUser(@PathVariable("idUser") UUID idUser, @PathVariable("idCandidature") UUID idCandidature){
         Optional<?> toDelete = cr.findById(idCandidature);
@@ -233,7 +240,7 @@ public class OffreStageController {
     @GetMapping("/Candidatures/{idCandidature}")
     public ResponseEntity<?> getStatutForCandidature(@PathVariable("idCandidature") UUID idCandidature){
         
-        return ResponseEntity.ok(ca.toCollection)
+        return ResponseEntity.ok(ca.toModel(cr.findById(idCandidature).get()));
 
     }
         
