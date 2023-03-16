@@ -16,7 +16,6 @@ public class DatabaseLoader {
     @Bean
     CommandLineRunner initDatabase(UsersRepository repository) {
 
-
         if (repository.count() == 0) {
             return args -> {
                 log.info(

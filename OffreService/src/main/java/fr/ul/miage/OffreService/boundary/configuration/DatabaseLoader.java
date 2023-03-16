@@ -22,9 +22,13 @@ public class DatabaseLoader {
             return args -> {
                 log.info(
                     "Preloading info in database" + repositoryOrga.save(new Organisation(
-                        "Entreprise1",
-                        "1 rue du Test",
-                        "France"
+                        "France",
+                        "Paris",
+                        "75000",
+                        "Rue de Paris",
+                        "patron@test.fr",
+                        "0606060606",
+                        "www.test.fr"
                     ))
                 );
                 log.info(
@@ -39,20 +43,13 @@ public class DatabaseLoader {
                         "test",
                         1500,
                         "test",
-                        1,
+                        repositoryOrga.findByPaysOrga("France").iterator().next().getId(),
                         "test",
                         "test",
                         75000,
                         "test",
                         0.0,
                         0.0,
-                        "test",
-                        "test",
-                        "test",
-                        "test",
-                        54000,
-                        "test",
-                        "test",
                         "test",
                         "Oui"
                     ))
@@ -68,7 +65,7 @@ public class DatabaseLoader {
                     "3mois",
                     2000,
                     "Aucune",
-                    1,
+                    repositoryOrga.findByPaysOrga("France").iterator().next().getId(),
                     "test2",
                     "test2",
                     75000,
@@ -76,16 +73,8 @@ public class DatabaseLoader {
                     0.0,
                     0.0,
                     "test2",
-                    "test2",
-                    "test2",
-                    "test2",
-                    54000,
-                    "test2",
-                    "test2",
-                    "test2",
                     "Oui"
                 ));
-
             };
         } else {
             return args -> {

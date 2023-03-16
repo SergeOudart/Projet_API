@@ -7,24 +7,31 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
 @Entity
-@AllArgsConstructor
 @NoArgsConstructor
 public class Organisation implements Serializable{
     
     private @Id @GeneratedValue(generator = "UUID") UUID id;
-    private String nom;
-    private String adresse;
-    private String pays;
+    private String nomOrga;
+    private String paysOrga;
+    private String villeOrga;
+    private String codePostalOrga;
+    private String rueOrga;
+    private String emailOrga;
+    private String telephoneOrga;
+    private String urlOrga;
 
-    public Organisation(String nom, String adresse, String pays) {
-        this.nom = nom;
-        this.adresse = adresse;
-        this.pays = pays;
+    public Organisation(String paysOrga, String villeOrga, String codePostalOrga, String rueOrga, String emailOrga, String telephoneOrga, String urlOrga) {
+        this.paysOrga = paysOrga;
+        this.villeOrga = villeOrga;
+        this.codePostalOrga = codePostalOrga;
+        this.rueOrga = rueOrga;
+        this.emailOrga = emailOrga;
+        this.telephoneOrga = telephoneOrga;
+        this.urlOrga = urlOrga;
     }
 }

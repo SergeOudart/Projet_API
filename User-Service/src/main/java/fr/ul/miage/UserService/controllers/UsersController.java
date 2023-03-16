@@ -44,21 +44,19 @@ public class UsersController {
         return ResponseEntity.ok(ua.toCollectionModel(ur.findAll()));
     }
 
+    // Récupérer user par id
     @GetMapping("/Users/{id}")
     public ResponseEntity<?> getUserById(@PathVariable("id") UUID uuid){
         return ResponseEntity.ok(ua.toModel(ur.findById(uuid).get()));
     }
 
+    // Récupérer user par login
     @GetMapping("/Users/login/{username}")
     public ResponseEntity<?> getUserByLogin(@PathVariable("username") String username){
         return ResponseEntity.ok(ua.toModel(ur.findByUsername(username).get()));
     }
 
-    @GetMapping("/User/{username}/getUser")
-    public ResponseEntity<?> getUserByUsername(@PathVariable("username") String username){
-        return ResponseEntity.ok(ua.toModel(ur.findByUsername(username).get()));
-    }
-
+    // Get candidatures de l'utilisateur
     @GetMapping("/Users/{username}/candidatures")
     public ResponseEntity<?> getCandidaturesByUser(@PathVariable("username") String username){
         UUID id = ur.findByUsername(username).get().getId();
@@ -69,6 +67,7 @@ public class UsersController {
         return ResponseEntity.ok(response.getBody());
     }
 
+    //Supprimer la candidature de l'utilisateur
     @DeleteMapping("/Users/{username}/candidatures/{idCandidature}")
     public ResponseEntity<?> deleteCandidature(@PathVariable("username") String username, @PathVariable("idCandidature") UUID idCandidature){
         UUID id = ur.findByUsername(username).get().getId();
@@ -96,7 +95,4 @@ public class UsersController {
 
         return ResponseEntity.ok(c.getEtat());
     }
-    
-
-    
 }
