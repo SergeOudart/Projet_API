@@ -17,8 +17,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
-import fr.ul.miage.OffreService.boundary.*;
-import fr.ul.miage.OffreService.boundary.CandidatureAssembler;
+import fr.ul.miage.OffreService.boundary.Assemblers.CandidatureAssembler;
+import fr.ul.miage.OffreService.boundary.Assemblers.OffreStageAssembler;
+import fr.ul.miage.OffreService.boundary.Assemblers.ProcessusRecrutementAssembler;
+import fr.ul.miage.OffreService.boundary.Repository.CandidatureRepository;
+import fr.ul.miage.OffreService.boundary.Repository.OffreStageRepository;
+import fr.ul.miage.OffreService.boundary.Repository.OrganisationRepository;
+import fr.ul.miage.OffreService.boundary.Repository.ProcessusRecrutementRepository;
 import fr.ul.miage.OffreService.entity.OffreStage;
 import fr.ul.miage.OffreService.entity.Organisation;
 import fr.ul.miage.OffreService.entity.Candidature;
@@ -117,7 +122,31 @@ public class OffreStageController {
     @PostMapping("/Offres")
     @Transactional
     public ResponseEntity<?> save(@RequestBody OffreStage offreStage){
-        OffreStage saved = or.save(offreStage);
+        OffreStage saved = or.save(
+            new OffreStage(
+                UUID.randomUUID(),
+                offreStage.getNom(),
+                offreStage.getDomaine(),
+                offreStage.getDescriptionStage(),
+                offreStage.getDatePublication(),
+                offreStage.getNiveauEtudesStage(),
+                offreStage.getExperienceRequiseStage(),
+                offreStage.getDateDebutStage(),
+                offreStage.getDureeStage(),
+                offreStage.getSalaireStage(),
+                offreStage.getIndemnisation(),
+                offreStage.getOrganisationId(),
+                offreStage.getPays(),
+                offreStage.getVille(),
+                offreStage.getCodePostal(),
+                offreStage.getRue(),
+                offreStage.getLongitude(),
+                offreStage.getLatitude(),
+                offreStage.getTelephone(),
+                offreStage.getUrl(),
+                offreStage.getStatut()
+            )
+        );
         URI location = linkTo(OffreStageController.class).slash(saved.getId()).toUri();
         return ResponseEntity.ok(location);
     }

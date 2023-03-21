@@ -1,4 +1,4 @@
-package fr.ul.miage.OffreService.boundary;
+package fr.ul.miage.OffreService.boundary.Assemblers;
 
 import java.util.List;
 import org.springframework.hateoas.CollectionModel;

@@ -1,4 +1,4 @@
-package fr.ul.miage.OffreService.boundary;
+package fr.ul.miage.OffreService.boundary.Repository;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -20,5 +20,5 @@ public interface OffreStageRepository extends JpaRepository<OffreStage, Integer>
     Iterable<? extends OffreStage> findBySalaireStage(String salaire);
     Iterable<? extends OffreStage> findByIndemnisation(String indemnisation);
     Iterable<OffreStage> findByOrganisationId(UUID organisationId);
-    Optional<? extends OffreStage> findById(UUID uuid);      
+    Optional<OffreStage> findById(UUID uuid);
 }

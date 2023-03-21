@@ -5,9 +5,10 @@ import java.util.UUID;
 
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.boot.test.web.server.LocalServerPort;
 
-import fr.ul.miage.OffreService.boundary.OffreStageAssembler;
-import fr.ul.miage.OffreService.boundary.OffreStageRepository;
+import fr.ul.miage.OffreService.boundary.Assemblers.OffreStageAssembler;
+import fr.ul.miage.OffreService.boundary.Repository.OffreStageRepository;
 import fr.ul.miage.OffreService.controllers.OffreStageController;
 import fr.ul.miage.OffreService.entity.OffreStage;
 
@@ -18,12 +19,7 @@ import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-
-
-
-
-
-
+import io.restassured.RestAssured;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT, properties = {
 	"spring.datasource.url=jdbc:h2:mem:m2db;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE",
@@ -36,6 +32,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 	"spring.h2.console.enabled=true",
 	"spring.jpa.hibernate.ddl-auto=update"})
 class OffreServiceApplicationTests {
+
+	@LocalServerPort
+	int port;
 
 	@Autowired
 	private OffreStageRepository offreRepository;
@@ -54,45 +53,47 @@ class OffreServiceApplicationTests {
 	@BeforeEach
 	public void setupContext() {
 		offreRepository.deleteAll();
-		//RestAssured.port = port;
+		RestAssured.port = port;
 	}
 
 
 	@Test
 	 void getOneOffre(){
-	
-		String test = "3c0969ac-c6e3-40f2-9fc8-2a59b8987918";
-		UUID uuid = UUID.fromString(test);
+		String uuidString = "3c0969ac-c6e3-40f2-9fc8-2a59b8987918";
+		UUID uuid = UUID.fromString(uuidString);
 		String a = uuid.toString();
 		UUID uuid2 = UUID.randomUUID();
 		String str="2023-02-01";  
 		String str2="2023-04-01";  
 		Date d1 = Date.valueOf(str);
 		Date d2 = Date.valueOf(str2);
-        OffreStage offre = new OffreStage("test"
-		, "domaine"
-		,"test decription"
-		,d1
-		,"1"
-		,"2"
-		,d2
-		,"2"
-		,3
-		,"2"
-		,uuid2,"France"
-		,"Metz"
-		,57000
-		,"1 rue"
-		,2.4
-		,2.3
-		,"95555"
-		,"aaaa");
-        offre.setId(uuid);
+        OffreStage offre = new OffreStage(
+			uuid
+			,"test"
+			,"domaine"
+			,"test decription"
+			,d1
+			,"1"
+			,"2"
+			,d2
+			,"2"
+			,3
+			,"2"
+			,uuid2
+			,"France"
+			,"Metz"
+			,57000
+			,"1 rue"
+			,2.4
+			,2.3
+			,"95555"
+			,"aaaa"
+		);
 		offreRepository.save(offre);
-		when().get("/offres/3c0969ac-c6e3-40f2-9fc8-2a59b8987918").then().statusCode(HttpStatus.SC_OK)
+		when().get("/Offres/3c0969ac-c6e3-40f2-9fc8-2a59b8987918").then()
 		.and()
 		.assertThat()
-		.body("id",equalTo(uuid));
+		.body("id",equalTo("3c0969ac-c6e3-40f2-9fc8-2a59b8987918"));
         
 		
 		/*Mockito.when(offreRepository.findById(uuid)).thenReturn(Optional.of(offre));

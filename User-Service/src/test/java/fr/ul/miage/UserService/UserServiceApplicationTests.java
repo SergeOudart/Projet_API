@@ -39,15 +39,7 @@ class UserServiceApplicationTests {
 	int port;
 
 	@Autowired
-	UsersRepository ur;
-
-	@Autowired
-    private UsersRepository ur2;
-
-
-
-
-
+    private UsersRepository ur;
 
 	@BeforeEach
 	public void setupContext() {
@@ -64,32 +56,36 @@ class UserServiceApplicationTests {
 		when().get("/Users").then().statusCode(HttpStatus.SC_OK);
 	}
 
- 	/*@Test
+ 	@Test
 	 void getAllUsers() {
-		 Users user = new Users("soudart", "1 rue de oui", "serge@oudart.com", "Oudart", "Serge");
-		 Users user2 = new Users("soudart2", "1 rue de oui", "serge2@oudart.com", "Oudart2", "Serge2");
-		 Users user3 = new Users("soudart3", "1 rue de oui", "serge3@oudart.com", "Oudart3", "Serge3");
-		 ur.save(user);
-		 ur.save(user2);
-		 ur.save(user3);
-		 when().get("/Users").then().statusCode(HttpStatus.SC_OK)
-			 .and().assertThat().body("size()",equalTo(3));
-	 }*/
-
-	/*  @Test
-	 void getOneUser(){
-		UUID id = UUID.randomUUID();
-		Users user = new Users(id,"soudart", "1 rue de oui", "serge@oudart.com", "Oudart", "Serge");
+		UUID uuid = UUID.fromString("3c0969ac-c6e3-40f2-9fc8-2a59b8987918");
+		UUID uuid2 = UUID.fromString("3c0969ac-c6e3-40f2-9fc8-2a59b8987919");
+		UUID uuid3 = UUID.fromString("3c0969ac-c6e3-40f2-9fc8-2a59b8987920");
+		Users user = new Users(uuid, "soudart", "1 rue de oui", "serge@oudart.com", "Oudart", "Serge");
+		Users user2 = new Users(uuid2, "soudart2", "1 rue de oui", "serge2@oudart.com", "Oudart2", "Serge2");
+		Users user3 = new Users(uuid3, "soudart3", "1 rue de oui", "serge3@oudart.com", "Oudart3", "Serge3");
 		ur.save(user);
-		when().get("/Users/{id}").then().statusCode(HttpStatus.SC_OK)
-		.and().assertThat().body("id",equalTo(id))
-		.body("username",equalTo("soudart"))
-		.body("adresse",equalTo("1 rue de oui"))
-		.body("email",equalTo("serge@oudart.com"))
-		.body("nom",equalTo("Oudart"))
-		.body("prenom",equalTo("Serge"));
+		ur.save(user2);
+		ur.save(user3);
+		when().get("/Users").then().statusCode(HttpStatus.SC_OK)
+			.and().assertThat().body("_embedded.usersList.size()",equalTo(3));
+	 }
 
-	 }*/
+	@Test
+	 void getOneUser(){
+		String uuidString = "3c0969ac-c6e3-40f2-9fc8-2a59b8987918";
+		UUID uuid = UUID.fromString(uuidString);
+		Users user = new Users(uuid, "soudart", "1 rue de oui", "serge@oudart.com", "Oudart", "Serge");
+		ur.save(user);
+		when().get("/Users/3c0969ac-c6e3-40f2-9fc8-2a59b8987918").then().statusCode(HttpStatus.SC_OK)
+		.and().assertThat().body("id",equalTo(uuidString))
+		.and().assertThat().body("username",equalTo("soudart"))
+		.and().assertThat().body("adresse",equalTo("1 rue de oui"))
+		.and().assertThat().body("email",equalTo("serge@oudart.com"))
+		.and().assertThat().body("nom",equalTo("Oudart"))
+		.and().assertThat().body("prenom",equalTo("Serge"));
+		
+	 }
 
 /* 	@Test
 	public void getAllUsersAPI() throws Exception 

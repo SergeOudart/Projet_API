@@ -13,18 +13,18 @@ import lombok.NoArgsConstructor;
 
 @Data
 @Entity
-@AllArgsConstructor
 @NoArgsConstructor 
 public class Users implements Serializable{
     
-    private @Id @GeneratedValue(generator = "UUID") UUID id;
+    private @Id UUID id;
     private String username;
     private String adresse;
     private String email;
     private String nom;
     private String prenom;
 
-    public Users(String username, String adresse, String email, String nom, String prenom) {
+    public Users(UUID id, String username, String adresse, String email, String nom, String prenom) {
+        this.id = id;
         this.username = username;
         this.adresse = adresse;
         this.email = email;

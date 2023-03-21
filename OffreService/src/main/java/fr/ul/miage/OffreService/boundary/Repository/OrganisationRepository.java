@@ -1,4 +1,4 @@
-package fr.ul.miage.OffreService.boundary;
+package fr.ul.miage.OffreService.boundary.Repository;
 
 
 import org.springframework.data.jpa.repository.JpaRepository;

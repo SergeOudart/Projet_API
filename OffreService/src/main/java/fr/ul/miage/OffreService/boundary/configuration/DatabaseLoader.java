@@ -1,15 +1,17 @@
 package fr.ul.miage.OffreService.boundary.configuration;
 
+import java.util.UUID;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import fr.ul.miage.OffreService.boundary.Repository.OffreStageRepository;
+import fr.ul.miage.OffreService.boundary.Repository.OrganisationRepository;
 import fr.ul.miage.OffreService.entity.OffreStage;
 import fr.ul.miage.OffreService.entity.Organisation;
-import fr.ul.miage.OffreService.boundary.OrganisationRepository;
-import fr.ul.miage.OffreService.boundary.OffreStageRepository;
 
 @Configuration
 public class DatabaseLoader {
@@ -33,6 +35,7 @@ public class DatabaseLoader {
                 );
                 log.info(
                     "Preloading info in database" + repository.save(new OffreStage(
+                        UUID.randomUUID(),
                         "test",
                         "test",
                         "test",
@@ -55,6 +58,7 @@ public class DatabaseLoader {
                     ))
                 );
                 repository.save(new OffreStage(
+                    UUID.randomUUID(),
                     "Offre1",
                     "Informatique",
                     "Développeur Java",

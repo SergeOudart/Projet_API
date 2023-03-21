@@ -8,7 +8,6 @@ import fr.ul.miage.UserService.entity.Users;
 
 public interface UsersRepository extends JpaRepository<Users, Integer>{
     Optional<Users> findByUsername(String username);
-
     Optional<Users> findById(UUID uuid);
     
 }
