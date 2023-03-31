@@ -5,10 +5,13 @@ import java.util.UUID;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.hateoas.CollectionModel;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
@@ -17,6 +20,7 @@ import fr.ul.miage.UserService.boundary.UsersAssembler;
 import fr.ul.miage.UserService.boundary.UsersRepository;
 import fr.ul.miage.UserService.boundary.CandidatureRepository;
 import fr.ul.miage.UserService.entity.Candidature;
+import fr.ul.miage.UserService.entity.Users;
 
 @RestController
 public class UsersController {
@@ -44,16 +48,31 @@ public class UsersController {
         return ResponseEntity.ok(ua.toCollectionModel(ur.findAll()));
     }
 
+    // Créer un user
+    @PostMapping("/Users")
+    public ResponseEntity<?> createUser(@RequestBody Users user){
+        ResponseEntity.ok(ua.toModel(ur.save(user)));
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
     // Récupérer user par id
     @GetMapping("/Users/{id}")
     public ResponseEntity<?> getUserById(@PathVariable("id") UUID uuid){
-        return ResponseEntity.ok(ua.toModel(ur.findById(uuid).get()));
+        if (!ur.findById(uuid).isPresent()) {
+            return ResponseEntity.notFound().build();
+        } else {
+            return ResponseEntity.ok(ua.toModel(ur.findById(uuid).get()));
+        }
     }
 
     // Récupérer user par login
     @GetMapping("/Users/login/{username}")
     public ResponseEntity<?> getUserByLogin(@PathVariable("username") String username){
-        return ResponseEntity.ok(ua.toModel(ur.findByUsername(username).get()));
+        if (!ur.findByUsername(username).isPresent()) {
+            return ResponseEntity.notFound().build();
+        } else {
+            return ResponseEntity.ok(ua.toModel(ur.findByUsername(username).get()));
+        }
     }
 
     // Get candidatures de l'utilisateur

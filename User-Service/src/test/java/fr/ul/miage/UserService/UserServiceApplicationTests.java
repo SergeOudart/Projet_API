@@ -1,9 +1,11 @@
 package fr.ul.miage.UserService;
 
 import static io.restassured.RestAssured.when;
+import static io.restassured.RestAssured.given;
 
 import org.apache.http.HttpStatus;
-import org.apache.http.protocol.HTTP;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +20,6 @@ import java.util.UUID;
 import fr.ul.miage.UserService.boundary.UsersRepository;
 import fr.ul.miage.UserService.entity.Users;
 import io.restassured.RestAssured;
-import fr.ul.miage.UserService.controllers.UsersController;
 
 
 
@@ -84,56 +85,54 @@ class UserServiceApplicationTests {
 		.and().assertThat().body("email",equalTo("serge@oudart.com"))
 		.and().assertThat().body("nom",equalTo("Oudart"))
 		.and().assertThat().body("prenom",equalTo("Serge"));
-		
 	 }
 
-/* 	@Test
-	public void getAllUsersAPI() throws Exception 
-{
-	Users user = new Users("soudart", "1 rue de oui", "serge@oudart.com", "Oudart", "Serge");
-	ur.save(user);
-  	mvc.perform(MockMvcRequestBuilders
-  			.get("/Users")
-  			.accept(MediaType.APPLICATION_JSON))
-      .andDo(print())
-      .andExpect(status().isOk())
-      .andExpect(MockMvcResultMatchers.jsonPath("$.Users").exists())
-      .andExpect(MockMvcResultMatchers.jsonPath("$.Users[*].id").isNotEmpty());
-}*/
-
-
- /* 	@Test 
-	public void testReturnAll(){
-
-		Users user = new Users("test1", "1 rue de oui", "serge@oudart.com", "Oudart", "Serge");
-		Users user3 = new Users("test2", "1 rue de oui", "usertest2@oudart.com", "nom2", "prenom2");
-		List<Users> userList = new ArrayList<>();
-		userList.add(user);
-		userList.add(user3);
+	@Test
+	 void getOneUserNotFound(){
+		String uuidString = "3c0969ac-c6e3-40f2-9fc8-2a59b8987918";
+		UUID uuid = UUID.fromString(uuidString);
+		Users user = new Users(uuid, "soudart", "1 rue de oui", "serge@oudart.com", "Oudart", "Serge");
 		ur.save(user);
-		ur.save(user3);
+		when().get("/Users/3c0969ac-c6e3-40f2-9fc8-2a59b8987919").then().statusCode(HttpStatus.SC_NOT_FOUND);
+	 }
 
-		Mockito.when(ur.findAll()).thenReturn(userList);
-		//Mockito.when(userAssembler.toCollectionModel(userList)).thenReturn(new CollectionModel<>(userList));
+	@Test
+	 void createUser() throws JSONException{
+		String uuidString = "3c0969ac-c6e3-40f2-9fc8-2a59b8987918";
 
-		ResponseEntity<?> response = userController.getAllUsers();
-      	assertEquals(HttpStatus.SC_OK, response.getStatusCode());
-      	assertNotNull(response.getBody());
+		JSONObject json = new JSONObject()
+		.put("id", uuidString)
+		.put("username", "soudart")
+		.put("adresse", "1 rue de oui")
+		.put("email", "serge@oudart.com")
+		.put("nom", "Oudart")
+		.put("prenom", "Serge");
 
+		given()
+			.contentType("application/json")
+			.body(json.toString())
+		.when()
+			.post("/Users")
+		.then()
+			.statusCode(HttpStatus.SC_CREATED);
+	 }
 
-	}*/
+	@Test
+	void getUserByLogin() {
+		String uuidString = "3c0969ac-c6e3-40f2-9fc8-2a59b8987918";
+		UUID uuid = UUID.fromString(uuidString);
+		Users user = new Users(uuid, "soudart", "1 rue de oui", "serge@oudart.fr", "Oudart", "Serge");
+		ur.save(user);
+		when().get("/Users/login/soudart").then().statusCode(HttpStatus.SC_OK)
+		.and().assertThat().body("id",equalTo(uuidString));
+	}
 
-	/*@Test
-	public void testfindAll() throws Exception {
-	  Users user = new Users("test1", "1 rue de oui", "serge@oudart.com", "Oudart", "Serge");
-	  List<Users> userList = Arrays.asList(user);
-   
-	  Mockito.when(ur.findAll()).thenReturn(userList);
-   
-	  mockMvc.perform(get("/Users"))
-		  .andExpect(status().isOk())
-		  .andExpect(jsonPath("$", Matchers.hasSize(1)))
-		  .andExpect(jsonPath("$[0].username", Matchers.is("test1")))
-		  .andReturn();
-	}*/
+	@Test
+	void getUserByLoginNotFound() {
+		String uuidString = "3c0969ac-c6e3-40f2-9fc8-2a59b8987918";
+		UUID uuid = UUID.fromString(uuidString);
+		Users user = new Users(uuid, "soudart", "1 rue de oui", "serge@oudart.fr", "Oudart", "Serge");
+		ur.save(user);
+		when().get("/Users/login/soudart2").then().statusCode(HttpStatus.SC_NOT_FOUND);
+	}
 }

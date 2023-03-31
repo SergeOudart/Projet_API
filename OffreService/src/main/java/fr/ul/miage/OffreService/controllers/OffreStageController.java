@@ -4,8 +4,10 @@ import java.net.URI;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -33,12 +35,19 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 @RestController
 public class OffreStageController {
 
+    @Autowired
     private final OffreStageRepository or;
+    @Autowired
     private final OffreStageAssembler oa;
+    @Autowired
     private final CandidatureRepository cr;
+    @Autowired
     private final CandidatureAssembler ca;
+    @Autowired
     private final OrganisationRepository orgar;
+    @Autowired
     private final ProcessusRecrutementRepository pr;
+    @Autowired
     private final ProcessusRecrutementAssembler pra;
 
     OffreStageController(OffreStageRepository or, OffreStageAssembler oa, CandidatureRepository cr, CandidatureAssembler ca, ProcessusRecrutementRepository pr, OrganisationRepository orgar, ProcessusRecrutementAssembler pra){
@@ -65,7 +74,13 @@ public class OffreStageController {
     //Récuperer une offre par son id
     @GetMapping("/Offres/{id}")
     public ResponseEntity<?> getOffreById(@PathVariable("id") UUID uuid){
-        return ResponseEntity.ok(oa.toModel(or.findById(uuid).get()));
+        Optional<OffreStage> offre = or.findById(uuid);
+        if (offre.isPresent()) {
+            return ResponseEntity.ok(oa.toModel(offre.get()));
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+
     }
 
     // Ajouter une organisation
@@ -84,18 +99,55 @@ public class OffreStageController {
     @GetMapping("/filtre/{filtre}")
     public ResponseEntity<?> getOffreByFiltre(@PathVariable("filtre") String filtre){
         if (filtre.contains("domaine=")) {
-            return ResponseEntity.ok(oa.toCollectionModel(or.findByDomaine(filtre.replace("domaine=", ""))));
+            Iterable<? extends OffreStage> offre = or.findByDomaine(filtre.replace("domaine=", ""));
+            if (offre.iterator().hasNext()) {
+                return ResponseEntity.ok(oa.toCollectionModel(offre));
+            } else {
+                return ResponseEntity.notFound().build();
+            }
         } else if (filtre.contains("niveau=")) {
-            return ResponseEntity.ok(oa.toCollectionModel(or.findByNiveauEtudesStage(filtre.replace("niveau=", ""))));
+            Iterable<? extends OffreStage> offre = or.findByNiveauEtudesStage(filtre.replace("niveau=", ""));
+            if (offre.iterator().hasNext()) {
+                return ResponseEntity.ok(oa.toCollectionModel(offre));
+            } else {
+                return ResponseEntity.notFound().build();
+            }
         } else if (filtre.contains("experience=")) {
-            return ResponseEntity.ok(oa.toCollectionModel(or.findByExperienceRequiseStage(filtre.replace("experience=", ""))));
+
+            Iterable<? extends OffreStage> offre = or.findByExperienceRequiseStage(filtre.replace("experience=", ""));
+            if (offre.iterator().hasNext()) {
+                return ResponseEntity.ok(oa.toCollectionModel(offre));
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+
         } else if (filtre.contains("pays=")) {
-            return ResponseEntity.ok(oa.toCollectionModel(or.findByPays(filtre.replace("pays=", ""))));
+
+            Iterable<? extends OffreStage> offre = or.findByPays(filtre.replace("pays=", ""));
+            if (offre.iterator().hasNext()) {
+                return ResponseEntity.ok(oa.toCollectionModel(offre));
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+
         } else if (filtre.contains("ville=")) {
-            return ResponseEntity.ok(oa.toCollectionModel(or.findByVille(filtre.replace("ville=", ""))));
+
+            Iterable<? extends OffreStage> offre = or.findByVille(filtre.replace("ville=", ""));
+            if (offre.iterator().hasNext()) {
+                return ResponseEntity.ok(oa.toCollectionModel(offre));
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+
         } else if (filtre.contains("paysOrga=")) {
-            Iterable<Organisation> orga = orgar.findByPaysOrga(filtre.replace("paysOrga=", ""));
-            return ResponseEntity.ok(oa.toCollectionModel(or.findByOrganisationId(orga.iterator().next().getId())));
+
+            Iterable<? extends OffreStage> offre = or.findByPays(filtre.replace("paysOrga=", ""));
+            if (offre.iterator().hasNext()) {
+                return ResponseEntity.ok(oa.toCollectionModel(offre));
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+
         } else if (filtre.contains("villeOrga=")) {
             Iterable<Organisation> orga = orgar.findByVilleOrga(filtre.replace("villeOrga=", ""));
             return ResponseEntity.ok(oa.toCollectionModel(or.findByOrganisationId(orga.iterator().next().getId())));
@@ -122,33 +174,38 @@ public class OffreStageController {
     @PostMapping("/Offres")
     @Transactional
     public ResponseEntity<?> save(@RequestBody OffreStage offreStage){
-        OffreStage saved = or.save(
-            new OffreStage(
-                UUID.randomUUID(),
-                offreStage.getNom(),
-                offreStage.getDomaine(),
-                offreStage.getDescriptionStage(),
-                offreStage.getDatePublication(),
-                offreStage.getNiveauEtudesStage(),
-                offreStage.getExperienceRequiseStage(),
-                offreStage.getDateDebutStage(),
-                offreStage.getDureeStage(),
-                offreStage.getSalaireStage(),
-                offreStage.getIndemnisation(),
-                offreStage.getOrganisationId(),
-                offreStage.getPays(),
-                offreStage.getVille(),
-                offreStage.getCodePostal(),
-                offreStage.getRue(),
-                offreStage.getLongitude(),
-                offreStage.getLatitude(),
-                offreStage.getTelephone(),
-                offreStage.getUrl(),
-                offreStage.getStatut()
-            )
-        );
-        URI location = linkTo(OffreStageController.class).slash(saved.getId()).toUri();
-        return ResponseEntity.ok(location);
+        try {
+            OffreStage saved = or.save(
+                new OffreStage(
+                    UUID.randomUUID(),
+                    offreStage.getNom(),
+                    offreStage.getDomaine(),
+                    offreStage.getDescriptionStage(),
+                    offreStage.getDatePublication(),
+                    offreStage.getNiveauEtudesStage(),
+                    offreStage.getExperienceRequiseStage(),
+                    offreStage.getDateDebutStage(),
+                    offreStage.getDureeStage(),
+                    offreStage.getSalaireStage(),
+                    offreStage.getIndemnisation(),
+                    offreStage.getOrganisationId(),
+                    offreStage.getPays(),
+                    offreStage.getVille(),
+                    offreStage.getCodePostal(),
+                    offreStage.getRue(),
+                    offreStage.getLongitude(),
+                    offreStage.getLatitude(),
+                    offreStage.getTelephone(),
+                    offreStage.getUrl()
+                )
+            );
+
+            System.out.println(saved.toString());
+            ResponseEntity.ok(oa.toModel(or.save(saved)));
+            return ResponseEntity.status(HttpStatus.CREATED).body(oa.toModel(or.save(saved)));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     //Poster une candidature
@@ -200,27 +257,72 @@ public class OffreStageController {
     @PutMapping("Offres/{id}")
     public ResponseEntity<?> update(@PathVariable("id") UUID uuid, @RequestBody OffreStage offreStage){
         OffreStage toUpdate = or.findById(uuid).get();
-        toUpdate.setNom(offreStage.getNom());
-        toUpdate.setDomaine(offreStage.getDomaine());
-        toUpdate.setDescriptionStage(offreStage.getDescriptionStage());
-        toUpdate.setDatePublication(offreStage.getDatePublication());
-        toUpdate.setNiveauEtudesStage(offreStage.getNiveauEtudesStage());
-        toUpdate.setExperienceRequiseStage(offreStage.getExperienceRequiseStage());
-        toUpdate.setDateDebutStage(offreStage.getDateDebutStage());
-        toUpdate.setDureeStage(offreStage.getDureeStage());
-        toUpdate.setSalaireStage(offreStage.getSalaireStage());
-        toUpdate.setIndemnisation(offreStage.getIndemnisation());
-        toUpdate.setOrganisationId(offreStage.getOrganisationId());
-        toUpdate.setPays(offreStage.getPays());
-        toUpdate.setVille(offreStage.getVille());
-        toUpdate.setCodePostal(offreStage.getCodePostal());
-        toUpdate.setRue(offreStage.getRue());
-        toUpdate.setLongitude(offreStage.getLongitude());
-        toUpdate.setLatitude(offreStage.getLatitude());
-        toUpdate.setTelephone(offreStage.getTelephone());
-        toUpdate.setUrl(offreStage.getUrl());
+        if (toUpdate == null) {
+            return ResponseEntity.notFound().build();
+        }
+        if (offreStage.getNom() != null) {
+            toUpdate.setNom(offreStage.getNom());
+        }
+        if (offreStage.getDomaine() != null) {
+            toUpdate.setDomaine(offreStage.getDomaine());
+        }
+        if (offreStage.getDescriptionStage() != null) {
+            toUpdate.setDescriptionStage(offreStage.getDescriptionStage());
+        }
+        if (offreStage.getDatePublication() != null) {
+            toUpdate.setDatePublication(offreStage.getDatePublication());
+        }
+        if (offreStage.getNiveauEtudesStage() != null) {
+            toUpdate.setNiveauEtudesStage(offreStage.getNiveauEtudesStage());
+        }
+        if (offreStage.getExperienceRequiseStage() != null) {
+            toUpdate.setExperienceRequiseStage(offreStage.getExperienceRequiseStage());
+        }
+        if (offreStage.getDateDebutStage() != null) {
+            toUpdate.setDateDebutStage(offreStage.getDateDebutStage());
+        }
+        if (offreStage.getDureeStage() != null) {
+            toUpdate.setDureeStage(offreStage.getDureeStage());
+        }
+        if (offreStage.getSalaireStage() != 0) {
+            toUpdate.setSalaireStage(offreStage.getSalaireStage());
+        }
+        if (offreStage.getIndemnisation() != null) {
+            toUpdate.setIndemnisation(offreStage.getIndemnisation());
+        }
+        if (offreStage.getOrganisationId() != null) {
+            toUpdate.setOrganisationId(offreStage.getOrganisationId());
+        }
+        if (offreStage.getPays() != null) {
+            toUpdate.setPays(offreStage.getPays());
+        }
+        if (offreStage.getVille() != null) {
+            toUpdate.setVille(offreStage.getVille());
+        }
+        if (offreStage.getCodePostal() != 0) {
+            toUpdate.setCodePostal(offreStage.getCodePostal());
+        }
+        if (offreStage.getRue() != null) {
+            toUpdate.setRue(offreStage.getRue());
+        }
+        if (offreStage.getLongitude() != 0) {
+            toUpdate.setLongitude(offreStage.getLongitude());
+        }
+        if (offreStage.getLatitude() != 0) {
+            toUpdate.setLatitude(offreStage.getLatitude());
+        }
+        if (offreStage.getTelephone() != null) {
+            toUpdate.setTelephone(offreStage.getTelephone());
+        }
+        if (offreStage.getUrl() != null) {
+            toUpdate.setUrl(offreStage.getUrl());
+        }
+        if (offreStage.getStatut() != null) {
+            toUpdate.setStatut(offreStage.getStatut());
+        }
         or.save(toUpdate);
-        return ResponseEntity.ok().build();
+
+        return ResponseEntity.ok(oa.toModel(toUpdate));
     }
 
     //Supprimer une offre
@@ -231,7 +333,7 @@ public class OffreStageController {
             OffreStage offreStage = (OffreStage) toDelete.get();
             or.delete(offreStage);
 
-            return ResponseEntity.ok("Offre supprimée");
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         }
         else {
             return ResponseEntity.notFound().build();

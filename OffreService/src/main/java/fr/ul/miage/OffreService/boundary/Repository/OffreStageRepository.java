@@ -6,7 +6,7 @@ import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 import fr.ul.miage.OffreService.entity.OffreStage;
 
-public interface OffreStageRepository extends JpaRepository<OffreStage, Integer> {
+public interface OffreStageRepository extends JpaRepository<OffreStage, UUID> {
 
     Iterable<? extends OffreStage> findByDomaine(String domaine);
     Iterable<? extends OffreStage> findByNiveauEtudesStage(String niveau);

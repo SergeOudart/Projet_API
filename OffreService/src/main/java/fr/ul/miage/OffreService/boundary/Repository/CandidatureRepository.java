@@ -7,10 +7,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import fr.ul.miage.OffreService.entity.Candidature;
 
-public interface CandidatureRepository extends JpaRepository<Candidature,Integer>{
+public interface CandidatureRepository extends JpaRepository<Candidature,UUID>{
 
     Iterable<? extends Candidature> findByIdUser(UUID idUser);
     Iterable<? extends Candidature> findByIdOffreStage(UUID idOffre);
-    Optional<? extends Candidature> findById(UUID id);
+    Optional<Candidature> findById(UUID id);
     
 }
